@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
 const OpenAI = require('openai'); // Ensure you have installed the openai library via npm
+const sendEmail = require('./emailer');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -86,16 +87,37 @@ app.post('/', async (req, res) => {
         console.log('Assistant ID = ', assistant.id,' for hotel ', hotel_name);
 
         // send post request to OnAsstIdGenerated server with assistant id
+        // https://createinstanceofassistant1-5a4aan2gca-el.a.run.app/deploy
         try {
-            const response = await fetch('https://createinstanceofassistant1-5a4aan2gca-el.a.run.app/deploy', {
+            const response = await fetch('http://localhost:8080/deploy', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ assistant_id: assistant.id }),
             });
-            const data = await response.json();
-            console.log('Response:', data);
+            const serviceURL = await response.json()
+            console.log('Service URL:', serviceURL);
+
+            // invoke another service which has some url while using serviceURL as parameter
+
+            const response2 = await fetch('https://twlionumberrouter-5a4aan2gca-el.a.run.app/updatePhoneNumber', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ serviceURL: serviceURL }),
+            });
+            const phoneNumber = await response2.json();
+            console.log('Phone Number RECEIVED:', phoneNumber);
+            // const { phoneNumber } = await response2.json();
+            // console.log('Phone Number RECEIVED:', phoneNumber);
+
+            // Send an email with the phone number
+            const emailResponse = await sendEmail(phoneNumber, FormData.FormDataFull['Email'][0]);
+            console.log('Email sent:', emailResponse);
+
+
         } catch (error) {
             console.error('Error in Creating Assistant with ID:', assistant.id, ' Error:', error);
         }
