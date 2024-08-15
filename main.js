@@ -72,7 +72,7 @@ app.post('/', async (req, res) => {
         const assistant = await openai.beta.assistants.create({
             name: `${hotel_name} Assistant`,
             instructions: finalPrompt,
-            model: "gpt-4o-mini",
+            model: "gpt-4o",
             tools: [{ type: "file_search" }],
         });
         console.log('Assistant created with ID:', assistant.id);
