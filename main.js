@@ -84,6 +84,21 @@ app.post('/', async (req, res) => {
 
         // Step 5: Send the Assistant ID as the response
         console.log('Assistant ID = ', assistant.id,' for hotel ', hotel_name);
+
+        // send post request to OnAsstIdGenerated server with assistant id
+        try {
+            const response = await fetch('https://createinstanceofassistant1-5a4aan2gca-el.a.run.app', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ assistant_id: assistant.id }),
+            });
+            const data = await response.json();
+            console.log('Response:', data);
+        } catch (error) {
+            console.error('Error in Creating Assistant with ID:', assistant.id, ' Error:', error);
+        }
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('An error occurred while creating the assistant.');
