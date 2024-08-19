@@ -89,7 +89,7 @@ app.post('/', async (req, res) => {
         // send post request to OnAsstIdGenerated server with assistant id
         // https://createinstanceofassistant1-5a4aan2gca-el.a.run.app/deploy
         try {
-            const response = await fetch('https://createinstanceofassistant1-5a4aan2gca-el.a.run.app/deploy', {
+            const response = await fetch('https://dockerfile-createinstance-5a4aan2gca-el.a.run.app/deploy', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
